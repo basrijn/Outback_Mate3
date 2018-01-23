@@ -59,7 +59,7 @@ def getSunSpec(basereg):
     except:
         return None
 
-    if ((response.registers[0] == 21365) and (response.registers[1]) == 28243):
+    if response.registers[0] == 21365 and response.registers[1] == 28243:
         logline("INFO", ".. SunSpec device found. Reading Manufacturer info")
     else:
         return None
