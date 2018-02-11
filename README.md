@@ -10,6 +10,8 @@ Note that this code only outputs to text, but can obviously easily be converted 
 ## MODBUS? SunSpec?
 Modbus is a pretty old industrial automation protocol. Implementations usually have some funky mapping to map current data formats to MODBUS. The MATE3 uses a renewable energy spec called SunSpec. It defines most conversions etc, same differences in the Outback implementation
 
+Outback specified their SunSpec mappings in [AXS_APP_NOTE.pdf](https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiassL8t57ZAhUO52MKHbC5BdMQFggnMAA&url=http%3A%2F%2Fwww.outbackpower.com%2Fdownloads%2Fdocuments%2FManage_the_System%2Faxs_port%2FAXS_APP_NOTE.pdf&usg=AOvVaw3ptY2O_YNDT-YqZ2_53ncp). The code uses the field names as variable names to make it easier to find them in the spec.
+
 ## Testing
 I have only tested this code with my own equipment:
 * [MATE3](http://www.outbackpower.com/outback-products/manage-the-system/mate3-system-display-and-controller/item/mate3s?category_id=545), System display and controller (note, not tested with newer MATE3s)
