@@ -174,13 +174,10 @@ except:
 
 logging.info(".. Connected OK to an Outback system")
 
-
 # TEST TEST TEST
 # print get_common_block(reg)
 
-
 startReg = reg + size + 4
-
 
 # Interrogation loop
 while True:
@@ -196,40 +193,36 @@ while True:
 
             # Inverter Output current
             response = client.read_holding_registers(reg + 7, 1)
-            current_inverted = int(response.registers[0])
-            logging.info(".... Inverted output current (A) " + str(current_inverted))
+            gs_single_inverter_output_current = int(response.registers[0])
+            logging.info(".... Inverted output current (A) " + str(gs_single_inverter_output_current))
 
             response = client.read_holding_registers(reg + 8, 1)
-            current_charger = int(response.registers[0])
-            logging.info(".... Charger current (A) " + str(current_charger))
+            gs_single_inverter_charge_current = int(response.registers[0])
+            logging.info(".... Charger current (A) " + str(gs_single_inverter_charge_current))
 
             response = client.read_holding_registers(reg + 9, 1)
-            current_in = int(response.registers[0])
-            logging.info(".... Input current (A) " + str(current_in))
-
-            response = client.read_holding_registers(reg + 30, 1)
-            voltage_ac_in = int(response.registers[0])
-            logging.info(".... Voltage in (V) " + str(voltage_ac_in))
+            gs_single_inverter_buy_current = int(response.registers[0])
+            logging.info(".... Input current (A) " + str(gs_single_inverter_buy_current))
 
             response = client.read_holding_registers(reg + 13, 1)
-            voltage_ac_out = int(response.registers[0])
-            logging.info(".... Voltage Out (V) " + str(voltage_ac_out))
+            gs_single_output_ac_voltage = int(response.registers[0])
+            logging.info(".... Voltage Out (V) " + str(gs_single_output_ac_voltage))
 
             response = client.read_holding_registers(reg + 14, 1)
             gs_single_inverter_operating_mode = int(response.registers[0])
             logging.info(".... Inverter Operating Mode " + str(gs_single_inverter_operating_mode))
 
             response = client.read_holding_registers(reg + 17, 1)
-            voltage_batt = int(response.registers[0]) * 0.1
-            logging.info(".... Battery voltage (V) " + str(voltage_batt))
+            gs_single_battery_voltage = int(response.registers[0]) * 0.1
+            logging.info(".... Battery voltage (V) " + str(gs_single_battery_voltage))
 
             response = client.read_holding_registers(reg + 18, 1)
-            voltage_batt_target = int(response.registers[0]) * 0.1
-            logging.info(".... Battery target voltage - temp compensated (V) " + str(voltage_batt_target))
+            gs_single_temp_compensated_target_voltage = int(response.registers[0]) * 0.1
+            logging.info(".... Battery target voltage - temp compensated (V) " + str(gs_single_temp_compensated_target_voltage))
 
             response = client.read_holding_registers(reg + 27, 1)
-            temp_batt = decode_int16(int(response.registers[0]))
-            logging.info(".... Battery temperature (V) " + str(temp_batt))
+            gs_single_battery_temperature = decode_int16(int(response.registers[0]))
+            logging.info(".... Battery temperature (V) " + str(gs_single_battery_temperature))
 
             response = client.read_holding_registers(reg + 30, 1)
             gs_single_ac_input_voltage = int(response.registers[0])
