@@ -7,7 +7,7 @@ The software in this repository can be used to extract data from the MATE3 contr
 
 Note that this code only outputs to text, but can obviously easily be converted over to output in other formats.
 
-##MODBUS? SunSpec?
+## MODBUS? SunSpec?
 Modbus is a pretty old industrial automation protocol. Implementations usually have some funky mapping to map current data formats to MODBUS. The MATE3 uses a renewable energy spec called SunSpec. It defines most conversions etc, same differences in the Outback implementation
 
 ## Testing
