@@ -189,6 +189,34 @@ while True:
         # print "Getting data from Register=" + str(reg) + " last size was " + str(size)
         blockResult = getBlock(reg)
 
+        # The Configuration blocks contain all the settings. This code only pulls a few that I cared about
+        if "Charge Controller Configuration block" in blockResult['DID']:
+            logging.info(".. Detected a Charge Controller Configuration block")
+
+            response = client.read_holding_registers(reg + 10, 1)
+            ccconfig_absorb_volts = int(response.registers[0])
+            logging.info(".... Absorb Voltage Target (V) " + str(ccconfig_absorb_volts))
+
+            response = client.read_holding_registers(reg + 14, 1)
+            ccconfig_float_volts = int(response.registers[0])
+            logging.info(".... Float Voltage Target (V) " + str(ccconfig_float_volts))
+
+            response = client.read_holding_registers(reg + 27, 1)
+            ccconfig_temp_comp_slope = int(response.registers[0])
+            logging.info(".... Float Voltage Target (V) " + str(ccconfig_temp_comp_slope))
+
+
+
+        if "Radian Inverter Configuration Block" in blockResult['DID']:
+            logging.info(".. Detected a Radian Inverter Configuration Block")
+
+        if "FX Inverter Configuration Block" in blockResult['DID']:
+            logging.info(".. Detected a FX Inverter Configuration Block")
+
+        if "FLEXnet-DC Configuration Block" in blockResult['DID']:
+            logging.info(".. Detected a FLEXnet-DC Configuration Block")
+
+        # The Real Time blocks contain measurement data
         if "Single Phase Radian Inverter Real Time Block" in blockResult['DID']:
             logging.info(".. Detected a Single Phase Radian Inverter Real Time Block")
             response = client.read_holding_registers(reg + 2, 1)
