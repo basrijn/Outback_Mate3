@@ -12,7 +12,6 @@ from pymodbus.payload import BinaryPayloadDecoder
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%Y%m%d %H:%M:%S')
 logging.getLogger(__name__)
 
-
 # Read SunSpec Header with logic from pymodbus example
 def decode_int16(signed_value):
     """
@@ -26,7 +25,6 @@ def decode_int16(signed_value):
 
     # Outback has some bugs in their firmware it seems. The FlexNet DC Shunt current measurements
     # return an offset from 65535 for negative values. No reading should ever be higher then 2000. So use that
-
     # print("int16 RAW: {!s}".format(signed_value))
 
     if signed_value > 32768+2000:
@@ -36,11 +34,9 @@ def decode_int16(signed_value):
     else:
         return signed_value
 
-
 def get_common_block(basereg):
     """ Read and return the sunspec common information
     block.
-
     :returns: A dictionary of the common block information
     """
     length = 69
@@ -48,7 +44,6 @@ def get_common_block(basereg):
     decoder = BinaryPayloadDecoder.fromRegisters(response.registers,
                                                  byteorder=Endian.Big,
                                                  wordorder=Endian.Big)
-
     return {
         'SunSpec_ID': decoder.decode_32bit_uint(),
         'SunSpec_DID': decoder.decode_16bit_uint(),
@@ -63,7 +58,6 @@ def get_common_block(basereg):
         'Next_DID_Length': decoder.decode_16bit_uint(),
     }
 
-
 # Read SunSpec header
 def getSunSpec(basereg):
     # Read two bytes from basereg, a SUNSPEC device will start with 0x53756e53
@@ -77,36 +71,35 @@ def getSunSpec(basereg):
         logging.info(".. SunSpec device found. Reading Manufacturer info")
     else:
         return None
-
+ 
     # There is a 16 bit string at basereg + 4 that contains Manufacturer
     response = client.read_holding_registers(basereg + 4, 16)
-
     decoder = BinaryPayloadDecoder.fromRegisters(response.registers,
                                                  byteorder=Endian.Big,
                                                  wordorder=Endian.Big)
     manufacturer = decoder.decode_string(16)
-    if "OUTBACK_POWER" in manufacturer.upper():
+    
+    if "OUTBACK_POWER" in str(manufacturer.upper()):
         logging.info(".. Outback Power device found")
+
     else:
         logging.info(".. Not an Outback Power device. Detected " + manufacturer)
         return None
-
     try:
         register = client.read_holding_registers(basereg + 3)
+
     except:
         return None
 
     blocksize = int(register.registers[0])
-
     return blocksize
-
 
 def getBlock(basereg):
     try:
         register = client.read_holding_registers(basereg)
     except:
         return None
-
+    
     blockID = int(register.registers[0])
 
     # Peek at block style
@@ -128,30 +121,34 @@ def getBlock(basereg):
     return {"size": blocksize, "DID": blockname}
 
 
-print
-"------------------------------------------------"
-print
-" MATE3 ModBus Interface"
-print
-"------------------------------------------------"
+print("------------------------------------------------")
+print(" MATE3 ModBus Interface")
+print("------------------------------------------------")
 
-mate3_ip = '192.168.1.112'
+mate3_ip = '192.168.0.150'
 mate3_modbus = 502
-
 sunspec_start_reg = 40000
 
 # Define the dictionary mapping SUNSPEC DID's to Outback names
 # Device IDs definitions = (DID)
 # AXS_APP_NOTE.PDF from Outback website has the data
 mate3_did = {
-    64110: "Outback block", 64111: "Charge Controller Block", 64112: "Charge Controller Configuration block",
-    64115: "Split Phase Radian Inverter Real Time Block", 64116: "Radian Inverter Configuration Block",
-    64117: "Single Phase Radian Inverter Real Time Block", 64113: "FX Inverter Real Time Block",
-    64114: "FX Inverter Configuration Block", 64119: "FLEXnet-DC Configuration Block",
+    64110: "Outback block",
+    64111: "Charge Controller Block",
+    64112: "Charge Controller Configuration block",    
+    64115: "Split Phase Radian Inverter Real Time Block",
+    64116: "Radian Inverter Configuration Block",
+    64117: "Single Phase Radian Inverter Real Time Block",
+    64113: "FX Inverter Real Time Block",
+    64114: "FX Inverter Configuration Block",
+    64119: "FLEXnet-DC Configuration Block",
     64118: "FLEXnet-DC Real Time Block",
-    64120: "Outback System Control Block", 101: "SunSpec Inverter - Single Phase",
+    64120: "Outback System Control Block",
+    101: "SunSpec Inverter - Single Phase",
     102: "SunSpec Inverter - Split Phase",
-    103: "SunSpec Inverter - Three Phase", 64255: "OpticsRE Statistics Block", 65535: "End of SunSpec"
+    103: "SunSpec Inverter - Three Phase",
+    64255: "OpticsRE Statistics Block",
+    65535: "End of SunSpec"
 }
 
 # Try to build the mate3 MODBUS connection
@@ -174,16 +171,12 @@ except:
 
 logging.info(".. Connected OK to an Outback system")
 
-# TEST TEST TEST
-# print get_common_block(reg)
-
+#TEST TEST TEST
 startReg = reg + size + 4
-
 # Interrogation loop
 while True:
     reg = startReg
     for block in range(0, 30):
-        # print "Getting data from Register=" + str(reg) + " last size was " + str(size)
         blockResult = getBlock(reg)
 
         if "Single Phase Radian Inverter Real Time Block" in blockResult['DID']:
@@ -291,6 +284,8 @@ while True:
         if "End of SunSpec" not in blockResult['DID']:
             reg = reg + blockResult['size'] + 2
         else:
+            print("-----------------------------------------------------")
             break
-
+    
+    break # DPO remove it if continuous loop needed
     time.sleep(3)
