@@ -92,11 +92,9 @@ def getSunSpec(basereg):
         return None
 
     blocksize = int(register.registers[0])
-    #print(blocksize) # DPO debug
     return blocksize
 
 def getBlock(basereg):
-    #print(basereg) #DPO debug
     try:
         register = client.read_holding_registers(basereg)
     except:
@@ -161,8 +159,6 @@ try:
     logging.info(".. Make sure we are indeed connected to an Outback power system")
     reg = sunspec_start_reg
     size = getSunSpec(reg)
-    #print(reg) #DPO debug
-    #print(size) #DPO debug
 
     if size is None:
         logging.info("We have failed to detect an Outback system. Exciting")
@@ -176,15 +172,12 @@ except:
 logging.info(".. Connected OK to an Outback system")
 
 #TEST TEST TEST
-#print (get_common_block(reg)) #DPO debug
 startReg = reg + size + 4
 # Interrogation loop
 while True:
     reg = startReg
     for block in range(0, 30):
-        #print ("Getting data from Register=" + str(reg) + " last size was " + str(size)) #DPO debug
         blockResult = getBlock(reg)
-        #print("block:"+str(block), "Registry:" + str(reg), getBlock(reg)) #DPO debug
 
         if "Single Phase Radian Inverter Real Time Block" in blockResult['DID']:
             logging.info(".. Detected a Single Phase Radian Inverter Real Time Block")
@@ -293,9 +286,6 @@ while True:
         else:
             print("-----------------------------------------------------")
             break
-    #
-    
     
     break # DPO remove it if continuous loop needed
     time.sleep(3)
-
